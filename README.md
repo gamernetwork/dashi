@@ -1,5 +1,5 @@
-Dashi - A flexible dashboard for serious architecture
-=====================================================
+Dashi - A flexible dashboard for serious stuff
+==============================================
 
 Modular and configurable, simply reads data from redis keys - it's up to you to define what they are.
 
