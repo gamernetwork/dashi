@@ -1,0 +1,21 @@
+{% extends "blocks/base.html" %}
+{% block render %}
+<div id="content{{ block_id }}">
+{{ content|safe }}
+</div>
+{% endblock render %}
+{% block support %}
+    <script type="text/javascript">
+        $(document).ready( function() {
+            setInterval( function() {
+                Dajaxice.dashi.update_block( function( data ) {
+                    if( data != $("#content{{ block_id }}").html() ) {
+                        $("#content{{ block_id }}").fadeOut( function() {
+                            $(this).html( data ).fadeIn();
+                        } );
+                    }
+                }, { block_id: "{{block_id}}" } );
+            }, {{ update_ms }} );
+        } );
+    </script>
+{% endblock support %}

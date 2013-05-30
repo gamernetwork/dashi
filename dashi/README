@@ -1,0 +1,43 @@
+Modules
+------------
+
+Live activity graphs
+  - from awstats
+  - use a podgy filter
+    - optimise hard!
+    - Whole network?
+
+Analytics for history
+  - Pages/Uniques past 30 days
+  - Pages/Uniques this audit period
+
+Pingdom
+  - All services in a tight matrix
+
+Scratch pad
+  - Render a wiki page from somewhere
+
+SVN
+  - Current HEAD
+  - {{ pysvn }}
+
+Servers
+  - All servers in a 'load matrix'?
+Latest nagios/pingdom alert
+  - 
+
+
+Overall health?
+
+
+Needs
+----------
+PIP
+django
+django_staticfiles
+django_dajaxice
+django_dajax
+django_concurrent_test_server (optional but makes for a more reliable test server - do `python manage.py runconcurrentserver`)
+
+APT
+python-svn

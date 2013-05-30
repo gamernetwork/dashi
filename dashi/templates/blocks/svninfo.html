@@ -1,0 +1,19 @@
+{% extends "blocks/base.html" %}
+{% block render %}
+<div style="vertical-align: baseline;">
+<small>HEAD</small> <big id="headrev{{ block_id }}">{{ headrev }}</big>
+</div>
+{% endblock render %}
+{% block support %}
+    <script type="text/javascript">
+        $(document).ready( function() {
+            setInterval( function() {
+                Dajaxice.dashi.update_block( function( data ) {
+                    $("#headrev{{ block_id }}").fadeOut( function() {
+                        $(this).text( data ).fadeIn();
+                    } );
+                }, { block_id: "{{block_id}}" } );
+            }, {{ update_ms }} );
+        } );
+    </script>
+{% endblock support %}

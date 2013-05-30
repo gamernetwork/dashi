@@ -1,0 +1,30 @@
+{% extends "blocks/base.html" %}
+{% block render %}
+<div id="nagiosleds{{ block_id }}">
+{{ statustable|safe }}
+</div>
+{% endblock render %}
+{% block support %}
+    <script type="text/javascript">
+        $(document).ready( function() {
+            setInterval( function() {
+                Dajaxice.dashi.update_block( function( data ) {
+                    $("#nagiosleds{{ block_id }}").html( data.tablehtml );
+                    report('{{block_id}}', data.threat);
+                    $(".serverstatus2").cyclicFade({
+                        repeat: 0,
+                        params: [
+                            {fadeout:150, stayout:350, opout:0, fadein:150, stayin:350, opin:1.0},
+                        ]
+                    });
+                }, { block_id: "{{block_id}}" } );
+            }, {{ update_ms }} );
+                        $(".serverstatus2").cyclicFade({
+                            repeat: 0,
+                            params: [
+                                {fadeout:100, stayout:300, opout:0, fadein:100, stayin:300, opin:1.0},
+                            ]
+                        });
+        } );
+    </script>
+{% endblock support %}
