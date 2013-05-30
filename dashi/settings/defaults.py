@@ -26,7 +26,7 @@ LANGUAGE_CODE = 'en-gb'
 SITE_ID = 1
 
 import os
-SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+SITE_ROOT = os.path.join( os.path.dirname(os.path.realpath(__file__)), "../" )
 STATIC_ROOT = os.path.join(SITE_ROOT, '.collectedstatic' )
 STATIC_URL = "/static/"
 STATICFILES_DIRS = (
