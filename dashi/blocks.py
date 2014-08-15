@@ -76,17 +76,13 @@ class Ticker( Base ):
 
         
 
-import pysvn
+import svn.utility
 import datetime
 class SVNInfo( Base ):
-    def get_login( realm, username, may_save ):
-        return True, username, "7329", True
     def update( self, request ):
-        return str( datetime.datetime.now().microsecond )[:5]
-        cl = pysvn.Client()
-        cl.callback_get_login = self.get_login
-        info = cl.info2( self.conf[ "repos" ] )[0]
-        return info[ "rev" ].number
+        cl = svn.utiliy.get_client(self.conf[ "repos" ])
+        info = cl.info['commit#revision']
+        return info
     def render( self, request ):
         self.context[ "headrev" ] = self.update( request )
         return render_to_string( "blocks/svninfo.html", self.context, RequestContext( request ) )
