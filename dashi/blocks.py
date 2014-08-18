@@ -87,15 +87,24 @@ class SVNInfo( Base ):
         self.context[ "headrev" ] = self.update( request )
         return render_to_string( "blocks/svninfo.html", self.context, RequestContext( request ) )
 
-from balbec.filebackend import FileBackend
+import urllib2
+import xml.etree.ElementTree as ET
 class NagiosLEDs( Base ):
     def get_status( self ):
-        fb = FileBackend( self.conf[ "object_cache" ], self.conf[ "status_file" ] )
+        usock = urllib2.urlopen("http://icinga.th.eurogamer.net/icinga-web/web/api/host/columns[HOST_NAME%7CHOST_CURRENT_STATE])/order(HOST_NAME;DESC)/authkey=aypeeeye/xml")
+	xmldoc = ET.parse(usock)
         status = {}
-        for hostgroup in fb.getHostgroups( self.conf[ "hostgroups" ] ):
-            hosts = fb.getHosts( hostgroup )
-            for host in hosts:
-                status[ host.hostname ] = ( host.hostname, host.result.status, host.result.output, )
+	for host in xmldoc.findall('result'):
+		hostInfo = {
+		  "HOST_NAME": "",
+		  "HOST_CURRENT_STATE": 0,
+		  "HOST_IS_PENDING": 0
+		}
+		for column in host.findall('column'):
+        		hostInfo[column.attrib.get("name")] = column.text
+		if hostInfo["HOST_CURRENT_STATE"] == "99":
+			hostInfo["HOST_CURRENT_STATE"] = 1
+		status[ hostInfo["HOST_NAME"] ] = ( hostInfo["HOST_NAME"], int(hostInfo["HOST_CURRENT_STATE"]), 1, )
         status = [ status[s] for s in status.keys() ]
         return status
     def update( self, request ):
@@ -105,12 +114,12 @@ class NagiosLEDs( Base ):
         threat = 0
         for s in status:
             if c % self.conf[ "cols" ] == 0:
-                ret += "<tr>" 
+                ret += "<tr>"
             threat = max(s[1], threat)
             s_img = "error"
             if s[1] == 0:
                 s_img = "ok"
-            if s[1] == 1:
+            if (s[1] == 1) or (s[1] == 99):
                 s_img = "warning"
             ret += "<td class=\"serverstatus%i\"><img src=\"%simg/server_%s.png\" width=\"8\" height=\"8\" /> %s</td>" % ( s[1], settings.STATIC_URL, s_img, s[0] )
             if (c+1) % self.conf[ "cols" ] == 0:

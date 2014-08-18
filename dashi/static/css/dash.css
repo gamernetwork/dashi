@@ -4,7 +4,7 @@ body {
     padding: 1em;
     background-color: black;
     color: white;
-    font-family: sans-serif;
+    font-family: Proxima Nova, sans-serif;
     font-size: 12px;
     background-color: #000000;
 }
@@ -12,7 +12,6 @@ table {
     border-collapse: collapse;
 }
 p, td, th {
-    font-family: sans-serif;
     font-size: 12px;
     text-align: left;
 }
@@ -35,55 +34,12 @@ table th, table td {
 .s1280x800 {
 }
 .block {
-    padding: 10px;
-    width: 80px;
-    height: 80px;
-    border: 1px solid black;
-}
-.block:hover {
-    border: 1px solid red;
-}
-.block.w2 {
-    width: 180px;
-}
-.block.h2 {
-    height: 180px;
-}
-.block.w3 {
-    width: 280px;
-}
-.block.h3 {
-    height: 280px;
-}
-.block.w4 {
-    width: 380px;
-}
-.block.h4 {
-    height: 380px;
-}
-.block.w5 {
-    width: 480px;
-}
-.block.h5 {
-    height: 480px;
-}
-.block.w6 {
-    width: 580px;
-}
-.block.h6 {
-    height: 580px;
-}
-.block.w7 {
-    width: 680px;
-}
-.block.h7 {
-    height: 680px;
-}
-.block.w8 {
-    width: 780px;
-}
-.block.h8 {
-    height: 780px;
+    padding: 15px;
+    /*width: 280px;
+    height: 180px;*/
+    /*background: -webkit-gradient( linear, left top, right bottom, from(#202020), to(#303030));*/
+	background-color: #202020;
+    border: 5px solid black;
 }
 
 h1 {
@@ -97,14 +53,14 @@ h1 {
 .block h2 {
     margin: 0px;
     font-size: 1em;
-    color: #c0c0c0;
+    color: #6099FF;
     font-weight: normal;
     border-top: 0px solid #606060;
     padding-top: 0px;
     margin-bottom: 1em;
 }
 pre, tt {
-    font-family: monospace;
+    font-family: "InconsolataMedium", fixed;
 }
 big {
     font-size: 4em;
@@ -113,12 +69,3 @@ big {
 small {
 }
 
-#globalthreat .ok {
-    background-color: green;
-}
-#globalthreat .warn {
-    background-color: orange;
-}
-#globalthreat .error {
-    background-color: red;
-}
