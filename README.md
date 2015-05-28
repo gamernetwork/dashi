@@ -11,24 +11,12 @@ Modules
  - Nagios service status summary matrix (overall cluster health)
  - Overall THREAT LEVEL (i.e. is everything cool?)
 
-Deps
-----
-
-This is what I've been running with, but YMMV:
-
-```
-env/bin/pip freeze -l
-Django==1.5.1
-django-dajax==0.9.2
-django-dajaxice==0.5.5
-python-memcached==1.48
-redis==2.4.13
-```
-
 Setup
 -----
 
-Copy
+Pop in a virtualenv and use pip + requirements.txt to set up.
+
+Copy:
 
 `dashi/settings/example-instance.py` to `dsahi/settings/instance.py`
 `dashi/settings/example-dashboard.py` to `dsahi/settings/dashboard.py`
