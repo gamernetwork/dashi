@@ -4,3 +4,4 @@ django-dajaxice==0.5.5
 python-memcached==1.48
 redis==2.4.13
 svn==0.3.23
+requests==2.7.0

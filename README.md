@@ -49,8 +49,3 @@ python manage.py runserver
 ```
 
 No wsgi adapter provided, but that should be fairly easy.
-
-Notes
------
-
-Uses code taken from Balbec project https://github.com/mkulke/balbec for parsing Nagios status files.
