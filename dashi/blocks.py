@@ -87,26 +87,26 @@ class SVNInfo( Base ):
         self.context[ "headrev" ] = self.update( request )
         return render_to_string( "blocks/svninfo.html", self.context, RequestContext( request ) )
 
-import urllib2
+import requests
 import xml.etree.ElementTree as ET
 class NagiosLEDs( Base ):
     def get_status( self ):
-        usock = urllib2.urlopen("http://icinga.th.eurogamer.net/icinga-web/web/api/host/columns[HOST_NAME%7CHOST_CURRENT_STATE])/order(HOST_NAME;DESC)/authkey=aypeeeye/xml")
-	xmldoc = ET.parse(usock)
-        status = {}
-	for host in xmldoc.findall('result'):
-		hostInfo = {
-		  "HOST_NAME": "",
-		  "HOST_CURRENT_STATE": 0,
-		  "HOST_IS_PENDING": 0
-		}
-		for column in host.findall('column'):
-        		hostInfo[column.attrib.get("name")] = column.text
-		if hostInfo["HOST_CURRENT_STATE"] == "99":
-			hostInfo["HOST_CURRENT_STATE"] = 1
-		status[ hostInfo["HOST_NAME"] ] = ( hostInfo["HOST_NAME"], int(hostInfo["HOST_CURRENT_STATE"]), 1, )
-        status = [ status[s] for s in status.keys() ]
-        return status
+		response = requests.get(self.conf["apiendpoint"] + "/host/columns[HOST_NAME%7CHOST_CURRENT_STATE])/order(HOST_NAME;DESC)/authkey=" + self.conf["apikey"] + "/xml")
+		xmldoc = ET.fromstring(response.content)
+		status = {}
+		for host in xmldoc.findall('result'):
+			hostInfo = {
+			  "HOST_NAME": "",
+			  "HOST_CURRENT_STATE": 0,
+			  "HOST_IS_PENDING": 0
+			}
+			for column in host.findall('column'):
+				hostInfo[column.attrib.get("name")] = column.text
+			if hostInfo["HOST_CURRENT_STATE"] == "99":
+				hostInfo["HOST_CURRENT_STATE"] = 1
+			status[ hostInfo["HOST_NAME"] ] = ( hostInfo["HOST_NAME"], int(hostInfo["HOST_CURRENT_STATE"]), 1, )
+		status = [ status[s] for s in status.keys() ]
+		return status
     def update( self, request ):
         status = self.get_status()
         ret = "<table><tbody>"
