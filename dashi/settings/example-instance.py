@@ -9,7 +9,7 @@ FAKE = True
 from scaffolding import *
 
 ADMINS = (
-    ('Mark Kennedy', 'mark@eurogamer.net'),
+    ('My Name', 'my.name@example.com'),
 )
 
 MANAGERS = ADMINS
