@@ -19,4 +19,4 @@ def render_blocks( request ):
     for mod in iter( modules_used ):
         da_media += mod.render_support_media( request )
         
-    return render_to_response( "dash.html", { "da_blocks" : da_blocks, "da_media" : da_media }, RequestContext(request) )
+    return render_to_response( "dash.html", { "da_blocks" : da_blocks, "da_media" : da_media, "settings" : settings }, RequestContext(request) )

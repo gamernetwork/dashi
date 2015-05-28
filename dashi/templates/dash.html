@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% load dajaxice_templatetags %}
 {% block content %}
-    <div id="screen" class="s1280x800">
-        <div class="block w2 h1" id="globalthreat">
+    <div id="screen" class="s1920x1080">
+        <div class="block w2 h1" style="width: {{ settings.DASHBOARD_UNIT_SIZE }}px; height: {{ settings.DASHBOARD_UNIT_SIZE }}px" id="globalthreat">
+			<div class="blockContents">
             <h2>Global status</h2>
-            <div>
-                <big>OK</big>
-            </div>
+				<div>
+					<big>OK</big>
+				</div>
+			</div>
             <script>
                 // update global threat level
                 states = Array();
@@ -42,7 +44,7 @@
     </div>
     <script type="text/javascript">
         $(function(){
-            $('#screen').masonry({ columnWidth: 150, itemSelector: '.block', animate: true });
+            $('#screen').masonry({ columnWidth: {{ settings.DASHBOARD_UNIT_SIZE }}, itemSelector: '.block', animate: true });
         });
     </script>
 {% endblock content %}

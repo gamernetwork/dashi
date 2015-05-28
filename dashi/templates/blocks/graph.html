@@ -21,8 +21,8 @@
                     animation: {
                         duration: {{ update_ms }} / 4
                     },
-                    height: 100 * {{height}} - 20,
-                    width: 100 * {{width}} - 20 - 140,
+                    height: {{ pixel_height}} - 60,
+                    width: {{ pixel_width}} - 20 - 140,
                     renderTo: 'graph{{ block_id }}',
                     defaultSeriesType: 'column',
                     marginRight: 10,

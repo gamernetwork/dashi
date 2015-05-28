@@ -19,7 +19,10 @@ class Base( object ):
         self.context = self.conf
         self.context[ "block_id" ] = block_id
         self.context[ "width" ] = width
+        self.context[ "pixel_width" ] = width * settings.DASHBOARD_UNIT_SIZE
         self.context[ "height" ] = height
+        self.context[ "pixel_height" ] = height * settings.DASHBOARD_UNIT_SIZE
+
     def render( self, request ):
         return ""
     def update( self, request ):

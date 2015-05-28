@@ -4,7 +4,7 @@ body {
     padding: 1em;
     background-color: black;
     color: white;
-    font-family: Proxima Nova, sans-serif;
+    font-family: monospace;
     font-size: 12px;
     background-color: #000000;
 }
@@ -34,12 +34,17 @@ table th, table td {
 .s1280x800 {
 }
 .block {
-    padding: 15px;
-    /*width: 280px;
-    height: 180px;*/
+    padding: 0px;
     /*background: -webkit-gradient( linear, left top, right bottom, from(#202020), to(#303030));*/
+}
+.blockContents {
+	overflow: hidden;
+	border: 5px solid black;
+	padding: 15px;
+	box-sizing: border-box;
+	height: 100%;
+	width: 100%;
 	background-color: #202020;
-    border: 5px solid black;
 }
 
 h1 {
@@ -60,7 +65,7 @@ h1 {
     margin-bottom: 1em;
 }
 pre, tt {
-    font-family: "InconsolataMedium", fixed;
+    font-family: monospace;
 }
 big {
     font-size: 4em;

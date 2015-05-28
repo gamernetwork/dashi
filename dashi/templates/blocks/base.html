@@ -1,7 +1,9 @@
-<div class="block w{{ width }} h{{ height }}" id="b{{ block_id }}">
+<div class="block w{{ width }} h{{ height }}" style="width: {{pixel_width}}px; height: {{pixel_height}}px" id="b{{ block_id }}">
+	<div class="blockContents">
     <h2>{{ title }}</h2>
     {% block render %}
     {% endblock render %}
+	</div>
 </div>
 {% block support %}
 {% endblock support %}
