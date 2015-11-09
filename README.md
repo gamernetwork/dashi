@@ -1,18 +1,15 @@
-Dashi - A flexible dashboard for serious stuff
-==============================================
+# Dashi - A flexible dashboard for serious stuff
 
 Modular and configurable, simply reads data from redis keys - it's up to you to define what they are.
 
-Modules
--------
+## Modules
 
- - Activity graphs (numbers over time)
+ - Activity graphs (numbers over time) - uses Highcharts.js http://www.highcharts.com/docs
  - Tickers (arbitrary numbers)
  - Nagios service status summary matrix (overall cluster health)
  - Overall THREAT LEVEL (i.e. is everything cool?)
 
-Setup
------
+## Setup
 
 Pop in a virtualenv and use pip + requirements.txt to set up.
 
@@ -27,8 +24,7 @@ Some settings you can change:
 
   - `FAKE` - use fake data instead of connecting to redis, which can help when setting up.
 
-Running
--------
+## Running
 
 To run on `localhost:8080` just do a standard a Django dev server:
 
