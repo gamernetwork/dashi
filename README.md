@@ -16,6 +16,7 @@ Pop in a virtualenv and use pip + requirements.txt to set up.
 Copy:
 
 `dashi/settings/example-instance.py` to `dsahi/settings/instance.py`
+
 `dashi/settings/example-dashboard.py` to `dsahi/settings/dashboard.py`
 
 ...and customise both (should be fairly self documenting).
