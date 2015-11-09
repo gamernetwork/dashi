@@ -2,16 +2,7 @@ DASHBOARD_UNIT_SIZE = 200
 
 DASHBOARD_BLOCKS = (
 #    { 'id': 3, 'module': 'dashi.blocks.Dummy', 'conf': { 'title': 'Nothing', 'width' : 1, 'height' : 1, } },
-    { 'id': 2, 'module': 'dashi.blocks.NagiosLEDs', 'width' : 3, 'height' : 2, 'conf': {
-        'title': 'Servers',
-        'hostgroups' : 'eg-linux-hosts',
-        'update_ms' : 10000,
-        'cols' : 4,
-        'apiendpoint' : 'http://icinga.example.com/icinga-web/web/api',
-        'apikey' : 'password',
-    } },
-    { 'id': 6, 'module': 'dashi.blocks.SVNInfo', 'width' : 2, 'height' : 1, 'conf': { 'title': 'Code Repository', 'repos': 'svn://svn/eurogamer/', 'update_ms' : 60000 } },
-    { 'id': 1, 'module': 'dashi.blocks.Scratch', 'width' : 2, 'height' : 2, 'conf': { 'title': 'Contacts', 'update_ms' : 30000, 'filename': 'scratch/contacts.txt' } },
+#    { 'id': 1, 'module': 'dashi.blocks.Scratch', 'width' : 2, 'height' : 2, 'conf': { 'title': 'Contacts', 'update_ms' : 30000, 'filename': 'scratch/contacts.txt' } },
     { 'id': 5, 'module': 'dashi.blocks.Graph', 'width' : 4, 'height' : 2, 
         'conf': { 'title': 'Realtime Traffic', 'update_ms' : 1000, 'redis_connection': { 'host': 'localhost', 'port': 6379, },
             'range': 100,
