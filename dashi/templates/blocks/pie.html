@@ -1,0 +1,61 @@
+{% extends "blocks/base.html" %}
+{% block render %}
+    <div id="graph{{ block_id }}">
+        Grarff
+    </div>
+{% endblock %}
+{% block support %}
+    <script type="text/javascript">
+
+$(function () {
+    var chart = Highcharts.chart('graph{{ block_id }}', {
+        title: { text: null },
+        chart: {
+            height: {{ height}} - 30,
+            width: {{ width }} - 30,
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie',
+            events: {
+              load: function() {
+                dashi_run( function() {
+                  Dajaxice.dashi.update_block( function( data ) {
+                    if( data != Dajaxice.EXCEPTION ) {
+                        chart.series[0].setData([], false);
+                        $.each( data, function( index, row ) {
+                          chart.series[0].addPoint({name: row[0], y: row[1]}, false);
+                        } );
+                        chart.redraw();
+                    }
+                  }, {block_id: "{{block_id}}"} );
+                }, {{ update_ms }} );
+              }
+            }
+        },
+        plotOptions: {
+
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Split',
+            colorByPoint: true,
+            data: [
+            ]
+        }]
+    });
+});
+
+
+    </script>
+{% endblock support %}

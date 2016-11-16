@@ -2,7 +2,7 @@
 {% load dajaxice_templatetags %}
 {% block content %}
     <div id="screen" class="s1920x1080">
-        <div class="block w2 h1" style="width: {{ settings.DASHBOARD_UNIT_SIZE }}px; height: {{ settings.DASHBOARD_UNIT_SIZE }}px" id="globalthreat">
+        {% comment %}<div class="block w2 h1" style="width: {{ settings.DASHBOARD_UNIT_SIZE }}px; height: {{ settings.DASHBOARD_UNIT_SIZE }}px" id="globalthreat">
 			<div class="blockContents">
             <h2>Global status</h2>
 				<div>
@@ -39,26 +39,32 @@
                     }, 2000 );
                 } );
             </script>
-        </div>
+        </div> {% endcomment %}
         {{ da_blocks|safe }}
     </div>
-    <script type="text/javascript">
-        $(function(){
-            $('#screen').masonry({ columnWidth: {{ settings.DASHBOARD_UNIT_SIZE }}, itemSelector: '.block', animate: true });
-        });
-    </script>
 {% endblock content %}
 {% block head %}
     <title>Dash</title>
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}fonts/inconsolata/stylesheet.css" />
-    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}fonts/junction/stylesheet.css" />
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dash.css" />
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.masonry.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bower_components/jquery/jquery.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.at_intervals.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cyclic-fade.js"></script>
-    <script type="text/javascript" src="http://code.highcharts.com/2.1.2/highcharts.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/themes/dark.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bower_components/highcharts/highcharts.js"></script>
     {% dajaxice_js_import %}
     {{ da_media|safe }}
+
+    <script>
+      Highcharts.setOptions({
+        chart: {
+          style: {
+            fontFamily: '"Helvetica Neue", sans-serif'
+          }
+        }
+      });
+      function dashi_run( cb, ms ) {
+        cb();
+        setInterval( cb, ms );
+      }
+    </script>
 {% endblock head %}

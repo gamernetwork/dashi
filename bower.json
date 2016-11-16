@@ -1,0 +1,7 @@
+{
+  "name": "dashi",
+  "version": "0.1",
+  "dependencies": {
+    "jquery": "1.5.2"
+  }
+}

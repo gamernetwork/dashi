@@ -2,17 +2,16 @@
 body {
     margin: 0px;
     padding: 1em;
-    background-color: black;
-    color: white;
-    font-family: monospace;
-    font-size: 12px;
-    background-color: #000000;
+    background-color: white;
+    color: #606060;
+    font-family: Helvetica Neue, "Source Sans Pro";
+    font-size: 14px;
 }
 table {
     border-collapse: collapse;
 }
 p, td, th {
-    font-size: 12px;
+    font-size: 1em;
     text-align: left;
 }
 td, th {
@@ -34,26 +33,25 @@ table th, table td {
 .s1280x800 {
 }
 .block {
-    padding: 0px;
     /*background: -webkit-gradient( linear, left top, right bottom, from(#202020), to(#303030));*/
+	padding: 15px;
+	box-sizing: border-box;
+	position: absolute;
 }
 .blockContents {
 	overflow: hidden;
-	border: 5px solid black;
-	padding: 15px;
-	box-sizing: border-box;
+	border-top: 4px solid #606060;
+	padding-top: 15px;
 	height: 100%;
 	width: 100%;
-	background-color: #202020;
+	background-color: #ffffff;
 }
 
 h1 {
     font-size: 2.0em;
     line-height: 1.1em;
-    color: #0050df;
-    font-weight: normal;
     margin: 0px;
-    width: 50%;
+	padding: 0px;
 }
 .block h2 {
     margin: 0px;

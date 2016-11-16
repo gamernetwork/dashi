@@ -5,6 +5,9 @@ from django.template import Template
 from django.shortcuts import *
 from django.template.loader import render_to_string
 import random
+import re
+from sources import Elasticsearch_Source
+
 class Base( object ):
     def __init__( self, block_id, conf, width=1, height=1 ):
         self.conf = {
@@ -18,10 +21,7 @@ class Base( object ):
             self.conf[ k ] = conf[ k ]
         self.context = self.conf
         self.context[ "block_id" ] = block_id
-        self.context[ "width" ] = width
-        self.context[ "pixel_width" ] = width * settings.DASHBOARD_UNIT_SIZE
-        self.context[ "height" ] = height
-        self.context[ "pixel_height" ] = height * settings.DASHBOARD_UNIT_SIZE
+        self.context[ "settings" ] = settings
 
     def render( self, request ):
         return ""
@@ -37,6 +37,48 @@ class Dummy( Base ):
     #    super( self, Dummy ).__init__( self, block_id, conf )
     def render( self, request ):
         return render_to_string( "blocks/dummy.html", self.context, RequestContext( request ) )
+
+class Table( Base ):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        super( Table, self ).__init__(block_id, conf, *args, **kwargs)
+    def render( self, request ):
+        return render_to_string( "blocks/table.html", self.context, RequestContext( request ) )
+    @staticmethod
+    def render_support_media( request ):
+        return render_to_string( "blocks/table_media.html", RequestContext( request ) )
+
+class Elasticsearch_Table( Table, Elasticsearch_Source ):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        Table.__init__(self, block_id, conf, *args, **kwargs)
+        Elasticsearch_Source.__init__(self, conf, *args, **kwargs)
+    def update(self, request):
+        return self.query()
+
+class Pie( Base ):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        super( Pie, self ).__init__(block_id, conf, *args, **kwargs)
+    def render( self, request ):
+        return render_to_string( "blocks/pie.html", self.context, RequestContext( request ) )
+    @staticmethod
+    def render_support_media( request ):
+        return render_to_string( "blocks/pie_media.html", RequestContext( request ) )
+
+class Elasticsearch_Pie( Pie, Elasticsearch_Source ):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        Pie.__init__(self, block_id, conf, *args, **kwargs)
+        Elasticsearch_Source.__init__(self, conf, *args, **kwargs)
+    def update(self, request):
+        return self.query()
+
+class ES_URL_Table( Elasticsearch_Table ):
+    def update(self, request):
+        r = Elasticsearch_Table.update(self, request)
+        def filter_url(url):
+            slug = url.split('/')[-1]
+            slug = re.sub('^[0-9\-]*', '', slug)
+            slug = re.sub('[0-9\-]*$', '', slug)
+            return slug.replace('-', ' ')
+        return [ (filter_url(u),c,) for (u,c) in r ]
         
 import time
 import redis
@@ -138,7 +180,10 @@ class NagiosLEDs( Base ):
 
 class Scratch( Base ):
     def update( self, request ):
-        return file( self.conf[ "filename" ] ).read()
+        if self.conf.has_key("filename"):
+            return file( self.conf[ "filename" ] ).read()
+        elif self.conf.has_key("content"):
+            return self.conf["content"]
     def render( self, request ):
         self.context[ "content" ] = self.update( request )
         return render_to_string( "blocks/scratch.html", self.context, RequestContext( request ) )
@@ -155,5 +200,5 @@ for bc in settings.DASHBOARD_BLOCKS:
     mod = sys.modules[bc_module]
     bc_class = getattr(mod, bc_classname)
     print bc_class
-    blocks.append( bc_class( bid, bc[ "conf" ], bc[ "width" ], bc[ "height" ] ) )
+    blocks.append( bc_class( bid, bc[ "conf" ] ) )
 

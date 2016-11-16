@@ -1,0 +1,25 @@
+{% extends "blocks/base.html" %}
+{% block render %}
+    <table class="data"></table>
+{% endblock %}
+{% block support %}
+    <script type="text/javascript">
+        function update_{{ block_id }}() {
+            Dajaxice.dashi.update_block( function( data ) {
+                if( data != Dajaxice.EXCEPTION ) {
+                    t = $( '#b{{block_id}} table.data' );
+                    t.empty();
+                    $.each( data, function( index, row ) {
+                      trow = $('<tr></tr>');
+                      $.each( row, function( index, col ) {
+                        tcol = $('<td>' + col + '</td>');
+                        trow.append(tcol);
+                      } );
+                      t.append(trow);
+                    } );
+                }
+            }, { block_id: "{{block_id}}" } );
+        }
+        dashi_run( update_{{ block_id }}, {{ update_ms }} );
+    </script>
+{% endblock support %}

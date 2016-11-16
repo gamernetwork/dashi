@@ -16,5 +16,6 @@ from dashi import blocks
 def update_block( request, block_id ):
     for bl in blocks.blocks:
         if str( bl.block_id ) == str( block_id ):
-            return simplejson.dumps( bl.update( request ) )
+            s = simplejson.dumps( bl.update( request ) )
+            return s
     return ""

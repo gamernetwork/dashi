@@ -1,6 +1,8 @@
-<div class="block w{{ width }} h{{ height }}" style="width: {{pixel_width}}px; height: {{pixel_height}}px" id="b{{ block_id }}">
+<div class="block" style="width: {{width}}px; height: {{height}}px; top: {{y}}px; left: {{x}}px" id="b{{ block_id }}">
 	<div class="blockContents">
+    {% if settings.DASHBOARD_SHOW_TITLES %}
     <h2>{{ title }}</h2>
+    {% endif %}
     {% block render %}
     {% endblock render %}
 	</div>
