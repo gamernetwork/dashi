@@ -51,6 +51,8 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.at_intervals.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cyclic-fade.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bower_components/highcharts/highcharts.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}bower_components/highcharts/highcharts-3d.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/themes/elementary.js"></script>
     {% dajaxice_js_import %}
     {{ da_media|safe }}
 
@@ -59,7 +61,10 @@
         chart: {
           style: {
             fontFamily: '"Helvetica Neue", sans-serif'
-          }
+          },
+        },
+        credits: {
+          enabled: false
         }
       });
       function dashi_run( cb, ms ) {

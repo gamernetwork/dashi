@@ -17,6 +17,10 @@ $(function () {
             plotBorderWidth: null,
             plotShadow: false,
             type: 'pie',
+            /*options3d: {
+              enabled: true,
+              alpha: 45
+            },*/
             events: {
               load: function() {
                 dashi_run( function() {
@@ -34,15 +38,14 @@ $(function () {
             }
         },
         plotOptions: {
-
             pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
+                /*depth: 35,*/
                 dataLabels: {
                     enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    format: '{point.name}: {point.percentage:.1f} %',
                     style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                      'fontSize': '14px',
+                      'color': '#606060'
                     }
                 }
             }

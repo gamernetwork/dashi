@@ -63,9 +63,25 @@ class Pie( Base ):
     def render_support_media( request ):
         return render_to_string( "blocks/pie_media.html", RequestContext( request ) )
 
+class Arch( Base ):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        super( Arch, self ).__init__(block_id, conf, *args, **kwargs)
+    def render( self, request ):
+        return render_to_string( "blocks/arch.html", self.context, RequestContext( request ) )
+    @staticmethod
+    def render_support_media( request ):
+        return render_to_string( "blocks/pie_media.html", RequestContext( request ) )
+
 class Elasticsearch_Pie( Pie, Elasticsearch_Source ):
     def __init__(self, block_id, conf, *args, **kwargs):
         Pie.__init__(self, block_id, conf, *args, **kwargs)
+        Elasticsearch_Source.__init__(self, conf, *args, **kwargs)
+    def update(self, request):
+        return self.query()
+
+class Elasticsearch_Arch( Arch, Elasticsearch_Source ):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        Arch.__init__(self, block_id, conf, *args, **kwargs)
         Elasticsearch_Source.__init__(self, conf, *args, **kwargs)
     def update(self, request):
         return self.query()
@@ -74,7 +90,7 @@ class ES_URL_Table( Elasticsearch_Table ):
     def update(self, request):
         r = Elasticsearch_Table.update(self, request)
         def filter_url(url):
-            slug = url.split('/')[-1]
+            slug = url.rstrip('/').split('/')[-1]
             slug = re.sub('^[0-9\-]*', '', slug)
             slug = re.sub('[0-9\-]*$', '', slug)
             return slug.replace('-', ' ')
