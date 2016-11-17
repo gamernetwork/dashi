@@ -21,6 +21,10 @@ Install and run redis and/or elasticsearch as your data sources.
 
 Pop in a virtualenv and use pip + requirements.txt to set up.
 
+Install bower and install the frontend deps:
+
+`bower install`
+
 Copy:
 
 `dashi/settings/example-instance.py` to `dashi/settings/instance.py`
