@@ -5,3 +5,4 @@ python-memcached==1.48
 redis==2.4.13
 svn==0.3.23
 requests==2.7.0
+elasticsearch==5.0.1
