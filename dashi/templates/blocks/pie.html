@@ -28,7 +28,9 @@ $(function () {
                     if( data != Dajaxice.EXCEPTION ) {
                         chart.series[0].setData([], false);
                         $.each( data, function( index, row ) {
-                          chart.series[0].addPoint({name: row[0], y: row[1]}, false);
+                          name = row[0];
+                          name = name.replace(/.*:/, "");
+                          chart.series[0].addPoint({name: name, y: row[1]}, false);
                         } );
                         chart.redraw();
                     }
