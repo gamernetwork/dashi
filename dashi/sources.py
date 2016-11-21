@@ -1,4 +1,7 @@
 from elasticsearch import Elasticsearch
+import logging
+
+logger = logging.getLogger('django')
 
 class Source(object):
     def __init__( self, conf, *args, **kwargs ):
@@ -9,6 +12,7 @@ class Elasticsearch_Source( Source ):
         super( Elasticsearch_Source, self ).__init__(conf, *args, **kwargs)
         self.client = Elasticsearch()
     def query(self):
+	logger.debug(self.conf['data']['query'])
         res = self.client.search(
             index = self.conf['data']['index'],
             body = self.conf['data']['query']
