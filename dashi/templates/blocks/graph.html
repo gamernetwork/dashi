@@ -1,7 +1,7 @@
 {% extends "blocks/base.html" %}
 {% block render %}
     <table id="graphval{{ block_id }}" class="graphvals">
-        {% for series in data %}
+        {% for series in data.series %}
             <tr>
                 <td>{{ series.label }}</td>
                 <td id="graphval{{ block_id }}{{forloop.counter}}"></td>
@@ -16,15 +16,14 @@
         //var chart;
         $(document).ready(function() {
             var block_id = {{ block_id }};
-            var chart = new Highcharts.Chart({
+            var chart = new Highcharts.chart('graph{{ block_id }}', {
                 chart:{
                     animation: {
                         duration: {{ update_ms }} / 4
                     },
-                    height: {{ pixel_height}} - 60,
-                    width: {{ pixel_width}} - 20 - 140,
-                    renderTo: 'graph{{ block_id }}',
-                    defaultSeriesType: 'column',
+                    height: {{ height }},
+                    width: {{ width }},
+                    type: 'column',
                     marginRight: 10,
                     events: {
                         load: function() {
@@ -35,34 +34,36 @@
                                 Dajaxice.dashi.update_block( function( data ) {
                                     if( data != Dajaxice.EXCEPTION ) {
                                         c = 0;
-                                        {% for series in data %}
+                                        {% for series in data.series %}
                                             myseries = serieses[c];
                                             now = (new Date()).getTime();
                                             //console.log( data.x );
                                             //console.log( data.y );
                                             //series.addPoint([now - ( data.x * 1000 ), data.y], false, true);
-                                            for( p in myseries.data ) {
+                                            /*for( p in myseries.data ) {
                                                 po = myseries.data[ p ];
                                                 po.update( [ po.x - {{ update_ms }} / 1000, po.y ], false );
                                                 $('#graphval{{ block_id }}{{ forloop.counter }}').text( po.y );
                                                 if( po.y > {{ threshold_error }} ) {
                                                     $('#graphval{{ block_id }}{{ forloop.counter }}').attr('class','alarm' );
                                                     $('#graphval{{ block_id }}{{ forloop.counter }}').css('color', '');
-                                                    report( '{{ block_id }}:{{ forloop.counter }}', 2 );
+                                                    //report( '{{ block_id }}:{{ forloop.counter }}', 2 );
                                                 } else if( po.y > {{ threshold_warning }} ) {
                                                     $('#graphval{{ block_id }}{{ forloop.counter }}').attr('class', 'warning' );
                                                     $('#graphval{{ block_id }}{{ forloop.counter }}').css('color', '');
-                                                    report( '{{ block_id }}:{{ forloop.counter }}', 1 );
+                                                    //report( '{{ block_id }}:{{ forloop.counter }}', 1 );
                                                 } else {
                                                     $('#graphval{{ block_id }}{{ forloop.counter }}').attr('class', '' );
                                                     $('#graphval{{ block_id }}{{ forloop.counter }}').css('color', myseries.color);
-                                                    report( '{{ block_id }}:{{ forloop.counter }}', 0 );
+                                                    //report( '{{ block_id }}:{{ forloop.counter }}', 0 );
                                                 }
-                                            }
-                                            myseries.addPoint([0, data.vals[c][1]], false, true);
+                                            }*/
+                                            console.log([data.vals[c][0], data.vals[c][1]]);
+                                            console.log(myseries);
+                                            myseries.addPoint([data.vals[c][0], data.vals[c][1]], true, true);
                                             c++;
                                         {% endfor %}
-                                        chart.redraw();
+                                        //chart.redraw();
                                     }
                                 }, { block_id: "{{block_id}}" } );
                             }, {{ update_ms }} );
@@ -105,7 +106,7 @@
                     enabled: false
                 },
                 plotOptions: {
-                    spline: {
+                    column: {
                         marker: {
                             enabled: false,
                         },
@@ -113,17 +114,15 @@
                     },
                 },
                 series: [
-                {% for series in data %}
+                {% for series in data.series %}
                 {
                     name: '{{ series.label }}',
-                    type: 'spline',
+                    type: 'column',
                     data: (function() {
-                        // generate an array of random data
-                        var data = [], i;
-                            //time = (new Date()).getTime(),
-                        for (i = -{{range}}; i <= 0; i+={{update_ms}}/1000) {
+                        var data = [], i, time = (new Date()).getTime();
+                        for (i = -{{range}}; i <= 0; i+=1) {
                             data.push({
-                                x: i,
+                                x: time/1000 + i,
                                 y: 0
                             });
                         }

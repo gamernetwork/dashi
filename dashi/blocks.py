@@ -6,7 +6,7 @@ from django.shortcuts import *
 from django.template.loader import render_to_string
 import random
 import re
-from sources import Elasticsearch_Source
+from sources import Elasticsearch_Source, Elasticsearch_Metric
 
 class Base( object ):
     def __init__( self, block_id, conf, width=1, height=1 ):
@@ -97,22 +97,27 @@ class ES_URL_Table( Elasticsearch_Table ):
         return [ (filter_url(u),c,) for (u,c) in r ]
         
 import time
-import redis
 class Graph( Base ):
     def __init__( self, block_id, conf, *kwargs ):
         super( Graph, self ).__init__( block_id, conf, *kwargs  )
-        self.datastore = redis.StrictRedis( conf[ "redis_connection" ][ "host" ], conf[ "redis_connection" ][ "port" ], db=0)
     def update( self, request ):
         if( settings.FAKE ):
             r = { 'vals': [ ( int( time.time() ), int( str( datetime.datetime.now().microsecond * random.random() )[:3] ) * (i+1)/4 + (i*100) ) for i,j in enumerate( self.conf[ "data" ] ) ] }
             return r
-        val = self.datastore.get( self.conf[ "datastore_key" ] )
-        return { 'x': val[ "time" ], 'y': val[ "count" ] }
     def render( self, request ):
         return render_to_string( "blocks/graph.html", self.context, RequestContext( request ) )
     @staticmethod
     def render_support_media( request ):
         return render_to_string( "blocks/graph_media.html", RequestContext( request ) )
+
+class Elasticsearch_Graph( Graph, Elasticsearch_Metric ):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        Graph.__init__(self, block_id, conf, *args, **kwargs)
+        Elasticsearch_Metric.__init__(self, conf, *args, **kwargs)
+    def update(self, request):
+        c = self.query()
+        r = { 'vals': [[ int( time.time() ), c ],] }
+        return r
 
 class Ticker( Base ):
     """Shows a value and optional alarm status"""
@@ -135,7 +140,7 @@ class Ticker( Base ):
     def render_support_media( request ):
         return render_to_string( "blocks/ticker_media.html", RequestContext( request ) )
 
-        
+#class Elasticsearch_Ticker( Base, Elasticsearch_Metric):
 
 import svn.utility
 import datetime
