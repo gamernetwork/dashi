@@ -19,12 +19,11 @@
             var chart = new Highcharts.chart('graph{{ block_id }}', {
                 chart:{
                     animation: {
-                        duration: {{ update_ms }} / 4
+                        duration: {{ update_ms }} / 10
                     },
                     height: {{ height }},
                     width: {{ width }},
-                    type: 'column',
-                    marginRight: 10,
+                    type: 'area',
                     events: {
                         load: function() {
             
@@ -58,8 +57,8 @@
                                                     //report( '{{ block_id }}:{{ forloop.counter }}', 0 );
                                                 }
                                             }*/
-                                            console.log([data.vals[c][0], data.vals[c][1]]);
-                                            console.log(myseries);
+                                            //console.log([data.vals[c][0], data.vals[c][1]]);
+                                            //console.log(myseries);
                                             myseries.addPoint([data.vals[c][0], data.vals[c][1]], true, true);
                                             c++;
                                         {% endfor %}
@@ -74,7 +73,7 @@
                 credits: false,
                 xAxis: {
                     gridLineWidth: 0,
-                    lineWidth: 0,
+                    lineWidth: 1,
                     type: 'int',
                     tickPixelInterval: 150
                 },
@@ -106,23 +105,35 @@
                     enabled: false
                 },
                 plotOptions: {
-                    column: {
+                    area: {
                         marker: {
                             enabled: false,
                         },
-                        lineWidth: 1
+                        lineWidth: 0,
+                        fillColor: {
+                          linearGradient: {
+                            x1: 1,
+                            y1: 0,
+                            x2: 0,
+                            y2: 0
+                          },
+                          stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                          ]
+                        },
                     },
                 },
                 series: [
                 {% for series in data.series %}
                 {
                     name: '{{ series.label }}',
-                    type: 'column',
+                    type: 'area',
                     data: (function() {
                         var data = [], i, time = (new Date()).getTime();
                         for (i = -{{range}}; i <= 0; i+=1) {
                             data.push({
-                                x: time/1000 + i,
+                                x: time/1000 + i * {{update_ms}} / 1000,
                                 y: 0
                             });
                         }

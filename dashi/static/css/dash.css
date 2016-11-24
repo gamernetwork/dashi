@@ -3,9 +3,12 @@ body {
     margin: 0px;
     padding: 15px;
     background-color: white;
-    color: #606060;
+    color: #000000;
     font-family: Helvetica Neue, "Source Sans Pro";
     font-size: 14px;
+	box-sizing: border-box;
+	width: 1920px;
+	height: 1080px;
 }
 table {
     border-collapse: collapse;

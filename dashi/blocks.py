@@ -122,7 +122,7 @@ class Elasticsearch_Graph( Graph, Elasticsearch_Metric ):
 class Ticker( Base ):
     """Shows a value and optional alarm status"""
     def __init__( self, block_id, conf, *kwargs ):
-        super( Ticker, self ).__init__( block_id, conf, *kwargs )
+        super( Ticker, self ).__init__( self, block_id, conf, *kwargs )
         self.datastore = redis.StrictRedis( conf[ "redis_connection" ][ "host" ], conf[ "redis_connection" ][ "port" ], db=0)
     def update( self, request ):
         #val = self.datastore.get( self.conf[ "datastore_key" ] )
@@ -140,7 +140,14 @@ class Ticker( Base ):
     def render_support_media( request ):
         return render_to_string( "blocks/ticker_media.html", RequestContext( request ) )
 
-#class Elasticsearch_Ticker( Base, Elasticsearch_Metric):
+class Elasticsearch_Ticker( Ticker, Elasticsearch_Metric):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        # TODO fix Ticker init so it doesn't make a redis store
+        Base.__init__( self, block_id, conf, *kwargs )
+        Elasticsearch_Metric.__init__(self, conf, *args, **kwargs)
+    def update(self, request):
+        c = self.query()
+        return { 'value': c, 'status': 'OK' }
 
 import svn.utility
 import datetime
