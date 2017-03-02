@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+import certifi
 import logging
 
 logger = logging.getLogger('django')
@@ -10,7 +11,7 @@ class Source(object):
 class Elasticsearch_Source( Source ):
     def __init__( self, conf, *args, **kwargs ):
         super( Elasticsearch_Source, self ).__init__(conf, *args, **kwargs)
-        self.client = Elasticsearch()
+        self.client = Elasticsearch([ self.conf['data']['host'], ])
     def query(self):
 	logger.debug(self.conf['data']['query'])
         res = self.client.search(
