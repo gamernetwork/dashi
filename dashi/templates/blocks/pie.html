@@ -11,16 +11,17 @@ $(function () {
     var chart = Highcharts.chart('graph{{ block_id }}', {
         title: { text: null },
         chart: {
-            height: {{ height}} - 30,
-            width: {{ width }} - 30,
+            height: {{ height}} - 120,
+            width: {{ width }} - 60,
             plotBackgroundColor: null,
             plotBorderWidth: null,
             plotShadow: false,
             type: 'pie',
-            /*options3d: {
+            options3d: {
               enabled: true,
-              alpha: 45
-            },*/
+              alpha: 45,
+              beta: 0
+            },
             events: {
               load: function() {
                 dashi_run( function() {
@@ -30,6 +31,7 @@ $(function () {
                         $.each( data, function( index, row ) {
                           name = row[0];
                           name = name.replace(/.*:/, "");
+                          name = name.replace(/\-/g, " ");
                           chart.series[0].addPoint({name: name, y: row[1]}, false);
                         } );
                         chart.redraw();
@@ -41,12 +43,13 @@ $(function () {
         },
         plotOptions: {
             pie: {
-                /*depth: 35,*/
+                depth: 35,
                 dataLabels: {
                     enabled: true,
                     format: '{point.name}: {point.y}',
                     style: {
-			fontSize: '1em'
+			fontSize: '1em',
+                        fontWeight: '400'
                     }
                 }
             }

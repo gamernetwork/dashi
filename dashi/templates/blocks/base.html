@@ -1,10 +1,12 @@
 <div class="block" style="width: {{width}}px; height: {{height}}px; top: {{y}}px; left: {{x}}px" id="b{{ block_id }}">
-	<div class="blockContents">
     {% block title %}
     {% if settings.DASHBOARD_SHOW_TITLES %}
+    {% if title %}
     <h2>{{ title }}</h2>
     {% endif %}
+    {% endif %}
     {% endblock title %}
+	<div class="blockContents">
     {% block render %}
     {% endblock render %}
 	</div>

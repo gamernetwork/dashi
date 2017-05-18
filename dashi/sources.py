@@ -16,7 +16,7 @@ class Redis_Source( Source ):
 class Elasticsearch_Source( Source ):
     def __init__( self, conf, *args, **kwargs ):
         super( Elasticsearch_Source, self ).__init__(conf, *args, **kwargs)
-        self.client = Elasticsearch([ self.conf['data']['host'], ])
+        self.client = Elasticsearch([ self.conf['data']['host'], ], verify_certs=False)
     def query(self):
         logger.debug(self.conf['data']['query'])
         res = self.client.search(
@@ -45,7 +45,7 @@ class Elasticsearch_Metric( Elasticsearch_Source ):
                     {
                       "range": {
                         "timestamp": {
-                          "gte": "now-30m",
+                          "gte": "now-" + self.conf['data']['window'],
                           "lte": "now",
                         }
                       }
