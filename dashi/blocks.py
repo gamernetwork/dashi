@@ -216,6 +216,13 @@ class Scratch( Base ):
         self.context[ "content" ] = self.update( request )
         return render_to_string( "blocks/scratch.html", self.context, RequestContext( request ) )
 
+class ClientInfo( Base ):
+    def update( self, request ):
+	return request.META.get('REMOTE_ADDR')
+    def render( self, request ):
+        self.context[ "content" ] = self.update( request )
+        return render_to_string( "blocks/scratch.html", self.context, RequestContext( request ) )
+
 # single global instance of blocks - bear in mind threading!
 blocks = []
 bid = 0

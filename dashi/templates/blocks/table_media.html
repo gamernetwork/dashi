@@ -1,7 +1,16 @@
 <style type="text/css">
   table.data td {
-    padding: 5px 0px;
+    padding: 2px 0px;
     padding-right: 15px;
-    width: 100%;
+    color: #41495c;
+  }
+  span.slug {
+    color: #313842;
+    font-weight: bold;
   }
 </style>
+<script>
+        function table_cell_format ( data ) {
+	   return data.replace( /\/([^\/]+)\/?$/, "/<span class='slug'>$1</span>" );
+        }
+</script>
