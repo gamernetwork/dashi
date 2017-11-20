@@ -54,7 +54,6 @@
     <script type="text/javascript" src="{{ STATIC_URL }}bower_components/highcharts/highcharts.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bower_components/highcharts/highcharts-3d.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/themes/elementary.js"></script>
-    {% dajaxice_js_import %}
     {{ da_media|safe }}
 
     <script>
@@ -70,10 +69,21 @@
         }
       });
       function dashi_run( cb, ms ) {
-	random_factor = Math.round((Math.random() / 20) * ms);
+        random_factor = Math.round((Math.random() / 20) * ms);
         //cb();
         setTimeout( cb, random_factor );
         setInterval( cb, ms + random_factor );
       }
+
+      var Dajaxice = {
+        dashi : {
+          update_block : function (cb, data) {
+            jQuery.ajax('/ajax_update_block/' + data.block_id, {
+                dataType: 'json',
+                success: cb
+            } );
+          }
+        }
+      };
     </script>
 {% endblock head %}

@@ -234,6 +234,6 @@ for bc in settings.DASHBOARD_BLOCKS:
     __import__(bc_module)
     mod = sys.modules[bc_module]
     bc_class = getattr(mod, bc_classname)
-    print bc_class
+    #print bc_class
     blocks.append( bc_class( bid, bc[ "conf" ] ) )
 

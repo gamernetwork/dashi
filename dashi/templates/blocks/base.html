@@ -13,3 +13,8 @@
 </div>
 {% block support %}
 {% endblock support %}
+<style>
+   {% for style in styles %}
+   #b{{block_id}} {{ style }}
+   {% endfor %}
+</style>

@@ -8,6 +8,8 @@ from django import http
 from django.core import urlresolvers
 from dashi import blocks
 import sys
+from django.utils import simplejson
+from django.http import HttpResponse
 
 def render_blocks( request ):
     da_blocks = ""
@@ -20,3 +22,10 @@ def render_blocks( request ):
         da_media += mod.render_support_media( request )
         
     return render_to_response( "dash.html", { "da_blocks" : da_blocks, "da_media" : da_media, "settings" : settings }, RequestContext(request) )
+
+def ajax_update_block( request, block_id ):
+    for bl in blocks.blocks:
+        if str( bl.block_id ) == str( block_id ):
+            s = simplejson.dumps( bl.update( request ) )
+            return HttpResponse(s)
+    return HttpResponse("")
