@@ -2,10 +2,10 @@
 body {
     margin: 0px;
     padding: 15px;
-    background-color: white;
-    color: #000000;
-    font-family: Helvetica Neue, "Source Sans Pro";
-    font-size: 14px;
+    background-color: #313842;
+    color: #313842;
+    font-family: 'Varela Round', "Source Sans Pro";
+    font-size: 12px;
 	box-sizing: border-box;
 	width: 1920px;
 	height: 1080px;
@@ -39,14 +39,17 @@ table th, table td {
     /*background: -webkit-gradient( linear, left top, right bottom, from(#202020), to(#303030));*/
 	padding-top: 25px;
 	padding-left: 25px;
-	box-sizing: border-box;
 	position: absolute;
+	box-sizing: border-box;
+	overflow: hidden;
 }
 .blockContents {
 	overflow: hidden;
 	height: 100%;
 	width: 100%;
 	background-color: #ffffff;
+        padding: 1em;
+	box-sizing: border-box;
 }
 
 h1 {
@@ -57,9 +60,16 @@ h1 {
 }
 .block h2 {
     margin: 0px;
-    font-size: 1.5em;
+    font-size: 0.9em;
+    color: #0069ff;
+    color: #313842;
+	
+    background-color: #e3e3d5;
+    text-transform: uppercase;
     line-height: 1.1em;
     padding: 0px;
+    font-weight: normal;
+padding: 1em;
 }
 pre, tt {
     font-family: monospace;

@@ -1,3 +1,5 @@
+import os
+
 USE_I18N = True
 USE_L10N = True
 
@@ -35,11 +37,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
 )
-DAJAXICE_MEDIA_PREFIX = "dajaxice"
+#DAJAXICE_MEDIA_PREFIX = "dajaxice"
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -48,8 +50,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
 )
-ROOT_URLCONF = 'dashi.urls'
-ADMIN_MEDIA_PREFIX = '/adminmedia/'
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',

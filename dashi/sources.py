@@ -16,11 +16,11 @@ class Redis_Source( Source ):
 class Elasticsearch_Source( Source ):
     def __init__( self, conf, *args, **kwargs ):
         super( Elasticsearch_Source, self ).__init__(conf, *args, **kwargs)
-        self.client = Elasticsearch([ self.conf['data']['host'], ])
+        self.client = Elasticsearch([ self.conf['data']['host'], ], verify_certs=False)
     def query(self):
         logger.debug(self.conf['data']['query'])
         res = self.client.search(
-            index = self.conf['data']['index'],
+            index = self.conf['data']['index'](),
             body = self.conf['data']['query']
         )
         return [ r.values() for r in res['aggregations'][self.conf['data']['use']]['buckets'] ]
@@ -45,7 +45,7 @@ class Elasticsearch_Metric( Elasticsearch_Source ):
                     {
                       "range": {
                         "timestamp": {
-                          "gte": "now-30m",
+                          "gte": "now-" + self.conf['data']['window'],
                           "lte": "now",
                         }
                       }
@@ -60,7 +60,7 @@ class Elasticsearch_Metric( Elasticsearch_Source ):
         }
             
         res = self.client.search(
-            index = self.conf['data']['index'],
+            index = self.conf['data']['index'](),
             body = q
         )
         return res['hits']['total']

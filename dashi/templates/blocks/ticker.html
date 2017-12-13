@@ -7,8 +7,8 @@
         dashi_run( function() {
             Dajaxice.dashi.update_block( function( data ) {
                 if( data != Dajaxice.EXCEPTION ) {
-                    $( '#b{{block_id}} .ticker' ).fadeOut( 10, function() {
-                        $( '#b{{block_id}} .ticker' ).html( data.value ).attr( "class", "ticker " + data.status ).fadeIn( 10 );
+                    $( '#b{{block_id}} .ticker' ).fadeOut( 100, function() {
+                        $( '#b{{block_id}} .ticker' ).html( parseInt(data.value).toLocaleString('en-GB', {useGrouping: true}) ).attr( "class", "ticker " + data.status ).fadeIn( 100 );
                     } );
                 }
             }, { block_id: "{{block_id}}" } );

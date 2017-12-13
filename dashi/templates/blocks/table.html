@@ -15,8 +15,8 @@
                     $.each( data, function( index, row ) {
                       trow = $('<tr></tr>');
                       $.each( row, function( index, col ) {
-                        tcol = $('<td>' + col + '</td>');
-                        trow.append(tcol);
+                        tcol = $('<td>' + table_cell_format(col + "") + '</td>');
+                        trow.prepend(tcol);
                       } );
                       t.append(trow);
                     } );

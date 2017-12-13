@@ -45,7 +45,8 @@
 {% endblock content %}
 {% block head %}
     <title>Dash</title>
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Varela|Varela+Round" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dash.css" />
     <script type="text/javascript" src="{{ STATIC_URL }}bower_components/jquery/jquery.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.at_intervals.js"></script>
@@ -53,14 +54,14 @@
     <script type="text/javascript" src="{{ STATIC_URL }}bower_components/highcharts/highcharts.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}bower_components/highcharts/highcharts-3d.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/themes/elementary.js"></script>
-    {% dajaxice_js_import %}
     {{ da_media|safe }}
 
     <script>
       Highcharts.setOptions({
         chart: {
           style: {
-            fontFamily: '"Helvetica Neue", sans-serif'
+            fontFamily: '"Varela Round", sans-serif',
+            fontWeight: 'normal'
           },
         },
         credits: {
@@ -68,10 +69,21 @@
         }
       });
       function dashi_run( cb, ms ) {
-	random_factor = Math.round((Math.random() / 20) * ms);
+        random_factor = Math.round((Math.random() / 20) * ms);
         //cb();
         setTimeout( cb, random_factor );
         setInterval( cb, ms + random_factor );
       }
+
+      var Dajaxice = {
+        dashi : {
+          update_block : function (cb, data) {
+            jQuery.ajax('/ajax_update_block/' + data.block_id, {
+                dataType: 'json',
+                success: cb
+            } );
+          }
+        }
+      };
     </script>
 {% endblock head %}
