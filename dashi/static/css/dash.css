@@ -2,9 +2,9 @@
 body {
     margin: 0px;
     padding: 15px;
-    background-color: #313842;
+    background-color: #ffffff;
     color: #313842;
-    font-family: 'Varela Round', "Source Sans Pro";
+    font-family: 'Varela Round';
     font-size: 12px;
 	box-sizing: border-box;
 	width: 1920px;
@@ -61,10 +61,9 @@ h1 {
 .block h2 {
     margin: 0px;
     font-size: 0.9em;
-    color: #0069ff;
     color: #313842;
 	
-    background-color: #e3e3d5;
+    border-bottom: 1px solid #d8dde5;
     text-transform: uppercase;
     line-height: 1.1em;
     padding: 0px;

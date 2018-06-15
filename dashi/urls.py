@@ -3,10 +3,10 @@ from django.conf import settings
 from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView
 
-from dajaxice.core import dajaxice_autodiscover, dajaxice_config
-dajaxice_autodiscover()
+#from dajaxice.core import dajaxice_autodiscover, dajaxice_config
+#dajaxice_autodiscover()
 
-import dashi.ajax
+#import dashi.ajax
 
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 

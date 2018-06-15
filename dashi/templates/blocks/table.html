@@ -15,7 +15,7 @@
                     $.each( data, function( index, row ) {
                       trow = $('<tr></tr>');
                       $.each( row, function( index, col ) {
-                        tcol = $('<td>' + table_cell_format(col + "") + '</td>');
+                        tcol = $('<td class="col' + index + '">' + table_cell_format(col + "") + '</td>');
                         trow.prepend(tcol);
                       } );
                       t.append(trow);

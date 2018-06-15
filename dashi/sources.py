@@ -34,10 +34,13 @@ class Elasticsearch_Source( Source ):
         super( Elasticsearch_Source, self ).__init__(conf, *args, **kwargs)
         self.client = Elasticsearch([ self.conf['data']['host'], ], verify_certs=False)
     def query(self):
-        logger.debug(self.conf['data']['query'])
+        q = self.conf['data']['query']
+        if callable(q):
+            q = q()
+        logger.debug(q)
         res = self.client.search(
             index = self.conf['data']['index'](),
-            body = self.conf['data']['query']
+            body = q
         )
         return [ r.values() for r in res['aggregations'][self.conf['data']['use']]['buckets'] ]
 
@@ -71,10 +74,13 @@ class Elasticsearch_Metric( Elasticsearch_Source ):
         super( Elasticsearch_Metric, self ).__init__(conf, *args, **kwargs)
 
     def query(self):
-        logger.debug(self.conf['data']['query'])
+        q = self.conf['data']['query']
+        if callable(q):
+            q = q()
+        logger.debug(q)
         res = self.client.search(
             index = self.conf['data']['index'](),
-            body = self.conf['data']['query']
+            body = q
         )
         try:
             return res['hits']['total']
@@ -84,4 +90,18 @@ class Elasticsearch_Metric( Elasticsearch_Source ):
             # allow dashboard to tolerate these errors by displaying '#ERR'
             return ERR
         
+class Elasticsearch_Aggregate( Elasticsearch_Source ):
+    "A source that returns a single row and value"
+    def __init__( self, conf, *args, **kwargs ):
+        super( Elasticsearch_Aggregate, self ).__init__(conf, *args, **kwargs)
+    def query(self):
+        q = self.conf['data']['query']
+        if callable(q):
+            q = q()
+        logger.debug(q)
+        res = self.client.search(
+            index = self.conf['data']['index'](),
+            body = q
+        )
+        return res['aggregations'][self.conf['data']['use']]['value']
     

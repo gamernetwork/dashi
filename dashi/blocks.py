@@ -6,7 +6,7 @@ from django.shortcuts import *
 from django.template.loader import render_to_string
 import random
 import re
-from sources import Elasticsearch_Source, Elasticsearch_Metric
+from sources import Elasticsearch_Source, Elasticsearch_Metric, Elasticsearch_Aggregate
 
 class Base( object ):
     def __init__( self, block_id, conf, width=1, height=1 ):
@@ -149,62 +149,14 @@ class Elasticsearch_Ticker( Ticker, Elasticsearch_Metric):
         c = self.query()
         return { 'value': c, 'status': 'OK' }
 
-import svn.utility
-import datetime
-class SVNInfo( Base ):
-    def update( self, request ):
-        cl = svn.utiliy.get_client(self.conf[ "repos" ])
-        info = cl.info['commit#revision']
-        return info
-    def render( self, request ):
-        self.context[ "headrev" ] = self.update( request )
-        return render_to_string( "blocks/svninfo.html", self.context, RequestContext( request ) )
-
-import requests
-import xml.etree.ElementTree as ET
-class NagiosLEDs( Base ):
-    def get_status( self ):
-		response = requests.get(self.conf["apiendpoint"] + "/host/columns[HOST_NAME%7CHOST_CURRENT_STATE])/order(HOST_NAME;DESC)/authkey=" + self.conf["apikey"] + "/xml")
-		xmldoc = ET.fromstring(response.content)
-		status = {}
-		for host in xmldoc.findall('result'):
-			hostInfo = {
-			  "HOST_NAME": "",
-			  "HOST_CURRENT_STATE": 0,
-			  "HOST_IS_PENDING": 0
-			}
-			for column in host.findall('column'):
-				hostInfo[column.attrib.get("name")] = column.text
-			if hostInfo["HOST_CURRENT_STATE"] == "99":
-				hostInfo["HOST_CURRENT_STATE"] = 1
-			status[ hostInfo["HOST_NAME"] ] = ( hostInfo["HOST_NAME"], int(hostInfo["HOST_CURRENT_STATE"]), 1, )
-		status = [ status[s] for s in status.keys() ]
-		return status
-    def update( self, request ):
-        status = self.get_status()
-        ret = "<table><tbody>"
-        c = 0
-        threat = 0
-        for s in status:
-            if c % self.conf[ "cols" ] == 0:
-                ret += "<tr>"
-            threat = max(s[1], threat)
-            s_img = "error"
-            if s[1] == 0:
-                s_img = "ok"
-            if (s[1] == 1) or (s[1] == 99):
-                s_img = "warning"
-            ret += "<td class=\"serverstatus%i\"><img src=\"%simg/server_%s.png\" width=\"8\" height=\"8\" /> %s</td>" % ( s[1], settings.STATIC_URL, s_img, s[0] )
-            if (c+1) % self.conf[ "cols" ] == 0:
-                ret += "<tr>" 
-            c += 1
-        if (c+1) % self.conf[ "cols" ] == 0:
-            ret += "<td></td><tr>" 
-        ret += "</tbody></table>"
-        return { 'tablehtml': ret, 'threat': threat }
-    def render( self, request ):
-        self.context[ "statustable" ] = self.update( request )["tablehtml"]
-        return render_to_string( "blocks/nagiosleds.html", self.context, RequestContext( request ) )
+class Elasticsearch_AggregateTicker( Ticker, Elasticsearch_Aggregate):
+    def __init__(self, block_id, conf, *args, **kwargs):
+        # TODO fix Ticker init so it doesn't make a redis store
+        Base.__init__( self, block_id, conf, *kwargs )
+        Elasticsearch_Aggregate.__init__(self, conf, *args, **kwargs)
+    def update(self, request):
+        c = self.query()
+        return { 'value': c, 'status': 'OK' }
 
 class Scratch( Base ):
     def update( self, request ):

@@ -9,9 +9,31 @@
     font-weight: bold;
     word-break: break-all;
   }
+  span.amp {
+    color: #0379c4;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9em;
+  }
+  span.num {
+    text-align: right;
+    display: block;
+  }
 </style>
 <script>
-        function table_cell_format ( data ) {
-	   return data.replace( /\/([^\/]+)\/?$/, "/<span class='slug'>$1</span>" );
-        }
+  function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+  function table_cell_format ( data ) {
+    if( isNumeric(data) ) {
+      return '<span class="num">' + parseInt(data).toLocaleString('en-GB', {useGrouping: true}) + '</span>';
+    } else {
+      // format AMP
+      r = data.replace( /\/([^\/]+)\/?(amp)?\/?$/, "/<span class='slug'>$1</span> <span class='amp'>$2</span>" );
+      r = r.replace( /([a-zA-Z0-9\-\.^\/]+\/)amp\/?(.*)/, "$1amp/$2 <span class='amp'>amp</span>" );
+      // format tags
+      r = r.replace(/^[a-z\-]+\:/, "");
+      return r
+    }
+  }
 </script>
