@@ -1,7 +1,8 @@
 Django==1.5.1
-redis==2.4.*
 svn==0.3.*
 requests==2.7.*
 elasticsearch==5.*
 certifi
 gunicorn
+django-cache-memoize=0.1.*
+python-memcached=1.*

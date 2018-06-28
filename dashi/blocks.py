@@ -12,13 +12,17 @@ class Base( object ):
     def __init__( self, block_id, conf, width=1, height=1 ):
         self.conf = {
             'title': '',
-            'update_ms': 5000
+            'update': 5
         }
         self.block_id = block_id
         self.width = width
         self.height = height
         for k in conf.keys():
             self.conf[ k ] = conf[ k ]
+
+        # set ms value for update to avoid a million conversions in the JS
+        self.conf['update_ms'] = self.conf['update'] * 1000
+
         self.context = self.conf
         self.context[ "block_id" ] = block_id
         self.context[ "settings" ] = settings

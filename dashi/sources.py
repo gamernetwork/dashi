@@ -1,7 +1,11 @@
 from elasticsearch import Elasticsearch
 import certifi
 import logging
-import redis
+from cache_memoize import cache_memoize
+import textwrap
+
+# for tidy logging
+wrapper = textwrap.TextWrapper( width=40, replace_whitespace=True, initial_indent = '    ', subsequent_indent = '        ')
 
 logger = logging.getLogger('django')
 
@@ -25,6 +29,33 @@ class Source(object):
     def __init__( self, conf, *args, **kwargs ):
         pass
 
+from hashlib import md5
+import pprint
+
+def sig_gen(*args):
+    # suppress 'self' from cache key - see https://github.com/peterbe/django-cache-memoize#args_rewrite
+    # the args_rewrite stuff does not actually handle kwargs, just positional
+    # if we could use kwargs, I would remove the index names from cache key too
+    return ""
+
+def hitme(*args, **kwargs):
+    logger.debug( "HIT" )
+    logger.debug("\n".join(wrapper.wrap(pprint.pformat(kwargs['body']).strip())))
+
+def missme(*args, **kwargs):
+    logger.debug( "MISS" )
+    logger.debug("\n".join(wrapper.wrap(pprint.pformat(kwargs['body']).strip())))
+
+
+class CachedElasticsearch(Elasticsearch):
+    """
+        Uses a local cache (whatever is configured in Django cache backend settings)
+    """
+    @cache_memoize(60, args_rewrite=sig_gen, hit_callable=hitme, miss_callable=missme)
+    def search(self, *args, **kwargs):
+        kwargs.update({'request_cache':True})
+        return super(CachedElasticsearch, self).search(*args, **kwargs)
+
 class Redis_Source( Source ):
     def __init__( self, conf, *args, **kwargs ):
         self.datastore = redis.StrictRedis( conf[ "redis_connection" ][ "host" ], conf[ "redis_connection" ][ "port" ], db=0)
@@ -32,7 +63,7 @@ class Redis_Source( Source ):
 class Elasticsearch_Source( Source ):
     def __init__( self, conf, *args, **kwargs ):
         super( Elasticsearch_Source, self ).__init__(conf, *args, **kwargs)
-        self.client = Elasticsearch([ self.conf['data']['host'], ], verify_certs=False)
+        self.client = CachedElasticsearch([ self.conf['data']['host'], ], verify_certs=False)
     def query(self):
         q = self.conf['data']['query']
         if callable(q):
