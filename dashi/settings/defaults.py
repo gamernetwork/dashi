@@ -1,7 +1,6 @@
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 FAKE = False
-DAJAXICE_DEBUG = DEBUG
 
 LOGGING = {
     'version': 1,

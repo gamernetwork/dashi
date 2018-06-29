@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load dajaxice_templatetags %}
 {% block content %}
     <div id="screen" class="s1920x1080">
         {% comment %}<div class="block w2 h1" style="width: {{ settings.DASHBOARD_UNIT_SIZE }}px; height: {{ settings.DASHBOARD_UNIT_SIZE }}px" id="globalthreat">
@@ -45,7 +44,6 @@
 {% endblock content %}
 {% block head %}
     <title>Dash</title>
-<link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=Varela|Varela+Round" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/dash.css" />
     <script type="text/javascript" src="{{ STATIC_URL }}bower_components/jquery/jquery.js"></script>

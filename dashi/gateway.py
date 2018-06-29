@@ -1,46 +1,24 @@
 from django.conf import settings
 import sys
-from django.template import RequestContext
-from django.template import Template
-from django.shortcuts import *
-from django.template.loader import render_to_string
 import random
 import re
-from sources import Elasticsearch_Source, Elasticsearch_Metric, Elasticsearch_Aggregate
+from sources import Table, Split, Metric
 
-class Base( object ):
-    def __init__( self, block_id, conf, width=1, height=1 ):
-        self.conf = {
-            'title': '',
-            'update': 5
-        }
-        self.block_id = block_id
-        self.width = width
-        self.height = height
-        for k in conf.keys():
-            self.conf[ k ] = conf[ k ]
+from __future__ import absolute_import, unicode_literals
+import os
+from celery import Celery
 
-        # set ms value for update to avoid a million conversions in the JS
-        self.conf['update_ms'] = self.conf['update'] * 1000
+"""
+    reports
+        table
+            the top things
+        split
+            the ratio of things
+        metric
+            is for a single, pre-known key
 
-        self.context = self.conf
-        self.context[ "block_id" ] = block_id
-        self.context[ "settings" ] = settings
+"""
 
-    def render( self, request ):
-        return ""
-    def update( self, request ):
-        return ""
-
-    @staticmethod
-    def render_support_media( request ):
-        return ""
-
-class Dummy( Base ):
-    #def __init__( self, block_id, conf ):
-    #    super( self, Dummy ).__init__( self, block_id, conf )
-    def render( self, request ):
-        return render_to_string( "blocks/dummy.html", self.context, RequestContext( request ) )
 
 class Table( Base ):
     def __init__(self, block_id, conf, *args, **kwargs):
@@ -61,31 +39,10 @@ class Elasticsearch_Table( Table, Elasticsearch_Source ):
 class Pie( Base ):
     def __init__(self, block_id, conf, *args, **kwargs):
         super( Pie, self ).__init__(block_id, conf, *args, **kwargs)
-    def render( self, request ):
-        return render_to_string( "blocks/pie.html", self.context, RequestContext( request ) )
-    @staticmethod
-    def render_support_media( request ):
-        return render_to_string( "blocks/pie_media.html", RequestContext( request ) )
-
-class Arch( Base ):
-    def __init__(self, block_id, conf, *args, **kwargs):
-        super( Arch, self ).__init__(block_id, conf, *args, **kwargs)
-    def render( self, request ):
-        return render_to_string( "blocks/arch.html", self.context, RequestContext( request ) )
-    @staticmethod
-    def render_support_media( request ):
-        return render_to_string( "blocks/pie_media.html", RequestContext( request ) )
 
 class Elasticsearch_Pie( Pie, Elasticsearch_Source ):
     def __init__(self, block_id, conf, *args, **kwargs):
         Pie.__init__(self, block_id, conf, *args, **kwargs)
-        Elasticsearch_Source.__init__(self, conf, *args, **kwargs)
-    def update(self, request):
-        return self.query()
-
-class Elasticsearch_Arch( Arch, Elasticsearch_Source ):
-    def __init__(self, block_id, conf, *args, **kwargs):
-        Arch.__init__(self, block_id, conf, *args, **kwargs)
         Elasticsearch_Source.__init__(self, conf, *args, **kwargs)
     def update(self, request):
         return self.query()
@@ -153,14 +110,62 @@ class Elasticsearch_Ticker( Ticker, Elasticsearch_Metric):
         c = self.query()
         return { 'value': c, 'status': 'OK' }
 
-class Elasticsearch_AggregateTicker( Ticker, Elasticsearch_Aggregate):
-    def __init__(self, block_id, conf, *args, **kwargs):
-        # TODO fix Ticker init so it doesn't make a redis store
-        Base.__init__( self, block_id, conf, *kwargs )
-        Elasticsearch_Aggregate.__init__(self, conf, *args, **kwargs)
-    def update(self, request):
-        c = self.query()
-        return { 'value': c, 'status': 'OK' }
+import svn.utility
+import datetime
+class SVNInfo( Base ):
+    def update( self, request ):
+        cl = svn.utiliy.get_client(self.conf[ "repos" ])
+        info = cl.info['commit#revision']
+        return info
+    def render( self, request ):
+        self.context[ "headrev" ] = self.update( request )
+        return render_to_string( "blocks/svninfo.html", self.context, RequestContext( request ) )
+
+import requests
+import xml.etree.ElementTree as ET
+class NagiosLEDs( Base ):
+    def get_status( self ):
+		response = requests.get(self.conf["apiendpoint"] + "/host/columns[HOST_NAME%7CHOST_CURRENT_STATE])/order(HOST_NAME;DESC)/authkey=" + self.conf["apikey"] + "/xml")
+		xmldoc = ET.fromstring(response.content)
+		status = {}
+		for host in xmldoc.findall('result'):
+			hostInfo = {
+			  "HOST_NAME": "",
+			  "HOST_CURRENT_STATE": 0,
+			  "HOST_IS_PENDING": 0
+			}
+			for column in host.findall('column'):
+				hostInfo[column.attrib.get("name")] = column.text
+			if hostInfo["HOST_CURRENT_STATE"] == "99":
+				hostInfo["HOST_CURRENT_STATE"] = 1
+			status[ hostInfo["HOST_NAME"] ] = ( hostInfo["HOST_NAME"], int(hostInfo["HOST_CURRENT_STATE"]), 1, )
+		status = [ status[s] for s in status.keys() ]
+		return status
+    def update( self, request ):
+        status = self.get_status()
+        ret = "<table><tbody>"
+        c = 0
+        threat = 0
+        for s in status:
+            if c % self.conf[ "cols" ] == 0:
+                ret += "<tr>"
+            threat = max(s[1], threat)
+            s_img = "error"
+            if s[1] == 0:
+                s_img = "ok"
+            if (s[1] == 1) or (s[1] == 99):
+                s_img = "warning"
+            ret += "<td class=\"serverstatus%i\"><img src=\"%simg/server_%s.png\" width=\"8\" height=\"8\" /> %s</td>" % ( s[1], settings.STATIC_URL, s_img, s[0] )
+            if (c+1) % self.conf[ "cols" ] == 0:
+                ret += "<tr>" 
+            c += 1
+        if (c+1) % self.conf[ "cols" ] == 0:
+            ret += "<td></td><tr>" 
+        ret += "</tbody></table>"
+        return { 'tablehtml': ret, 'threat': threat }
+    def render( self, request ):
+        self.context[ "statustable" ] = self.update( request )["tablehtml"]
+        return render_to_string( "blocks/nagiosleds.html", self.context, RequestContext( request ) )
 
 class Scratch( Base ):
     def update( self, request ):
@@ -172,12 +177,7 @@ class Scratch( Base ):
         self.context[ "content" ] = self.update( request )
         return render_to_string( "blocks/scratch.html", self.context, RequestContext( request ) )
 
-class ClientInfo( Base ):
-    def update( self, request ):
-	return request.META.get('REMOTE_ADDR')
-    def render( self, request ):
-        self.context[ "content" ] = self.update( request )
-        return render_to_string( "blocks/scratch.html", self.context, RequestContext( request ) )
+app = Celery()
 
 # single global instance of blocks - bear in mind threading!
 blocks = []
@@ -190,6 +190,12 @@ for bc in settings.DASHBOARD_BLOCKS:
     __import__(bc_module)
     mod = sys.modules[bc_module]
     bc_class = getattr(mod, bc_classname)
-    #print bc_class
+    print bc_class
     blocks.append( bc_class( bid, bc[ "conf" ] ) )
 
+@app.task
+def run_report(report):
+    report.run()
+
+if __name__ == '__main__':
+    app.worker_main()

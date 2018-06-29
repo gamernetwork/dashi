@@ -5,11 +5,21 @@ queries - it's up to you to define what they are.
 
 Uses the brilliant Highcharts.js library http://www.highcharts.com/docs
 
+## Design
+
+Contains a frontend Django app and a backend gateway which marshalls and caches data from
+data sources into a presentable form.
+
+  - Gateway uses Celery 'beat' scheduling to perdiocally pull data from
+    backends and prepare tabulated data in JSON form which is stored in Redis.
+  - Client widgets poll Django reporting endpoints which check Redis for data
+    in agreed format
+
 ## Widgets
 
  - Activity graphs (numbers over time)
- - Top-things-tables out of elasticsearch 
- - Pie charts of things from elasticsearch
+ - Top-things-tables out of elasticsearch and other places
+ - Pie charts of things from elasticsearch and other places
  - Raw HTML (for decoration)
  - Tickers (arbitrary numbers)
  - Nagios service status summary matrix (overall cluster health)
