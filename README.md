@@ -13,7 +13,9 @@ queries - it's up to you to define what they are.
 
 ## Setup
 
-Install and configure redis and/or elasticsearch as your data sources.
+Install and configure elasticsearch as your data sources.
+
+Install memcached as your query cache.
 
 Pop in a virtualenv and use pip + requirements.txt to set up.
 
