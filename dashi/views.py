@@ -20,8 +20,10 @@ def render_blocks( request ):
         modules_used.add( bl.__class__ )
     for mod in iter( modules_used ):
         da_media += mod.render_support_media( request )
+
+    style_override = settings.DASHBOARD_STYLE_OVERRIDE
         
-    return render_to_response( "dash.html", { "da_blocks" : da_blocks, "da_media" : da_media, "settings" : settings }, RequestContext(request) )
+    return render_to_response( "dash.html", { "da_blocks" : da_blocks, "da_media" : da_media, "style_override": style_override,  "settings" : settings }, RequestContext(request) )
 
 def ajax_update_block( request, block_id ):
     for bl in blocks.blocks:
