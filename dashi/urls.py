@@ -29,7 +29,7 @@ urlpatterns = patterns('',
     url( r'^$', 'dashi.views.render_blocks' ),
     #( r'^$', TemplateView.as_view( template_name='dash.html') ),
 )
-#if settings.DEBUG:
+# if settings.DEBUG:
 #    urlpatterns += patterns('staticfiles.views',
 #        url(r'^static/(?P<path>.*)$', 'serve'),
 #    )

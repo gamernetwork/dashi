@@ -1,2 +1,6 @@
 *.pyc
 bower_components
+dashi.log
+dashi/static/node_modules/
+dashi/settings/instance.py
+dashi/settings/dashboard.py

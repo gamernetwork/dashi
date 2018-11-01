@@ -1,70 +1,57 @@
 {% extends "blocks/base.html" %}
 {% block render %}
-    <table id="graphval{{ block_id }}" class="graphvals">
-        {% for series in data.series %}
-            <tr>
-                <td>{{ series.label }}</td>
-                <td id="graphval{{ block_id }}{{forloop.counter}}"></td>
-        {% endfor %}
-    </table>
     <div id="graph{{ block_id }}">
-        Grarff
+        Grarff // whats the point in this? does it just show when the graph is failing to appear?
     </div>
 {% endblock %}
 {% block support %}
     <script type="text/javascript">
         //var chart;
         $(document).ready(function() {
+
+            /*
+            Creates an area chart which is rendered to a block (update_block). The 
+            height, width, and update time parameters of the chart are specified
+            in dashboard.py. Other options for the 
+
+            TODO: the right side of the chart is not visible.
+            TODO: does graph media really do anything?
+            TODO: fix time on chart
+            TODO: can the bit where series is specified near the bottom of the code be removed?
+            */
+
             var block_id = {{ block_id }};
+
+
+
             var chart = new Highcharts.chart('graph{{ block_id }}', {
-                chart:{
+
+                // general options for the chart. 
+
+                chart: {
+                    
                     animation: {
-                        duration: {{ update_ms }} / 10
+                        duration: '{{ update_ms }}' / 10 // The duration of the animation in milliseconds
                     },
-                    height: {{ height }},
-                    width: {{ width }},
+
+                    height: '{{ height }}' - 80, // -80 allows chart to fit inside parent block
+                    width: '{{ width }}',
+                    
                     type: 'area',
+
                     events: {
-                        load: function() {
-            
-                            // set up the updating of the chart each second
-                            var serieses = this.series;
-                            setInterval( function() {
-                                Dajaxice.dashi.update_block( function( data ) {
-                                    if( data != Dajaxice.EXCEPTION ) {
-                                        c = 0;
-                                        {% for series in data.series %}
-                                            myseries = serieses[c];
-                                            now = (new Date()).getTime();
-                                            //console.log( data.x );
-                                            //console.log( data.y );
-                                            //series.addPoint([now - ( data.x * 1000 ), data.y], false, true);
-                                            /*for( p in myseries.data ) {
-                                                po = myseries.data[ p ];
-                                                po.update( [ po.x - {{ update_ms }} / 1000, po.y ], false );
-                                                $('#graphval{{ block_id }}{{ forloop.counter }}').text( po.y );
-                                                if( po.y > {{ threshold_error }} ) {
-                                                    $('#graphval{{ block_id }}{{ forloop.counter }}').attr('class','alarm' );
-                                                    $('#graphval{{ block_id }}{{ forloop.counter }}').css('color', '');
-                                                    //report( '{{ block_id }}:{{ forloop.counter }}', 2 );
-                                                } else if( po.y > {{ threshold_warning }} ) {
-                                                    $('#graphval{{ block_id }}{{ forloop.counter }}').attr('class', 'warning' );
-                                                    $('#graphval{{ block_id }}{{ forloop.counter }}').css('color', '');
-                                                    //report( '{{ block_id }}:{{ forloop.counter }}', 1 );
-                                                } else {
-                                                    $('#graphval{{ block_id }}{{ forloop.counter }}').attr('class', '' );
-                                                    $('#graphval{{ block_id }}{{ forloop.counter }}').css('color', myseries.color);
-                                                    //report( '{{ block_id }}:{{ forloop.counter }}', 0 );
-                                                }
-                                            }*/
-                                            //console.log([data.vals[c][0], data.vals[c][1]]);
-                                            //console.log(myseries);
-                                            myseries.addPoint([data.vals[c][0], data.vals[c][1]], true, true);
-                                            c++;
-                                        {% endfor %}
-                                        //chart.redraw();
+
+                        load: function() { 
+                            var serieses = this.series; 
+                            setInterval( function() { 
+                                Dajaxice.dashi.update_block( function(data) { 
+                                    if(data != Dajaxice.EXCEPTION) { 
+
+                                        for (var i = 0; i <= serieses.length; i++) {
+                                            serieses[i].addPoint([data.vals[i][0], data.vals[i][1]], true, true)
+                                        }
                                     }
-                                }, { block_id: "{{block_id}}" } );
+                                }, { block_id: "{{block_id}}" } ); 
                             }, {{ update_ms }} );
                         }
                     }
@@ -72,30 +59,20 @@
                 title: false,
                 credits: false,
                 xAxis: {
-                    gridLineWidth: 0,
-                    lineWidth: 1,
-                    type: 'int',
+                    gridLineWidth: 0, // documentation says that this defauts to 0 but it doesn't... weird.
+                    type: 'datetime', 
                     tickPixelInterval: 150
                 },
                 yAxis: {
-                    gridLineWidth: 0,
                     min: 0,
-                    lineWidth: 0,
-                    title: false, /*{
-                        text: 'Impressions/sec',
-                        enabled: false
-                    },*/
-                    plotLines: false, /*[{
-                        value: 0,
-                        width: 1,
-                        color: '#808080'
-                    }]*/
+                    plotLines: false, 
                 },
-                tooltip: {
+                tooltip: { // appears when hovering over chart.
                     formatter: function() {
                             return '<b>'+ this.series.name +'</b><br/>'+
                             Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+ 
                             Highcharts.numberFormat(this.y, 2);
+                            // CLEANER? STRING INTERPOLATION?
                     }
                 },
                 legend: {
@@ -109,42 +86,30 @@
                         marker: {
                             enabled: false,
                         },
-                        lineWidth: 0,
-                        fillColor: {
-                          linearGradient: {
-                            x1: 1,
-                            y1: 0,
-                            x2: 0,
-                            y2: 0
-                          },
-                          stops: [
-                            [0, Highcharts.getOptions().colors[0]],
-                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                          ]
-                        },
+                        fillColor: false,
                     },
                 },
-                series: [
+                series: [ // specific options for each series instance. 
                 {% for series in data.series %}
                 {
                     name: '{{ series.label }}',
                     type: 'area',
                     data: (function() {
-                        var data = [], i, time = (new Date()).getTime();
-                        for (i = -{{range}}; i <= 0; i+=1) {
+                        var data = [], i, time = (new Date()) // creates three variables
+                        for (i = - '{{range}}'; i <= 0; i+=1) { // TODO: need a better understanding of this loop.
                             data.push({
-                                x: time/1000 + i * {{update_ms}} / 1000,
+                                x: time/1000 + i * '{{update_ms}}' / 1000,
                                 y: 0
                             });
                         }
+
                         return data;
-                    })()
+
+                    })() // mistake?
                 },
                 {% endfor %}
                 ]
             });
-            
-            
         });
                 
     </script>
