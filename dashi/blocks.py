@@ -172,6 +172,12 @@ class Scratch( Base ):
         self.context[ "content" ] = self.update( request )
         return render_to_string( "blocks/scratch.html", self.context, RequestContext( request ) )
 
+class Logo( Base ):
+    #def __init__( self, block_id, conf ):
+    #    super( self, Dummy ).__init__( self, block_id, conf )
+    def render( self, request ):
+        return render_to_string( "blocks/logo.html", self.context, RequestContext( request ) )
+
 class ClientInfo( Base ):
     def update( self, request ):
 	return request.META.get('REMOTE_ADDR')

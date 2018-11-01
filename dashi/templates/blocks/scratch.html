@@ -8,6 +8,7 @@
     <script type="text/javascript">
         $(document).ready( function() {
             setInterval( function() {
+                console.log("Scratch block updating")
                 Dajaxice.dashi.update_block( function( data ) {
                     if( data != $("#content{{ block_id }}").html() ) {
                         $("#content{{ block_id }}").fadeOut( function() {
