@@ -120,7 +120,7 @@ class Elasticsearch_Graph( Graph, Elasticsearch_Metric ):
         Elasticsearch_Metric.__init__(self, conf, *args, **kwargs)
     def update(self, request):
         c = self.query()
-        r = { 'vals': [[ int( time.time() ), c ],] } # Vals is a list within a list containing time and count
+        r = { 'vals': [[ int(time.time()) * 1000, c ],] }
         return r
 
 class Ticker( Base ):

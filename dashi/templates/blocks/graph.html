@@ -13,37 +13,26 @@
             Creates an area chart which is rendered to a block (update_block). 
             The height, width, and update time parameters of the chart are 
             specified in the dashboard.py config file. Other options for the graph are 
-            specified here.
-
-            TODO: the right side of the chart is not visible.
-            TODO: does graph media really do anything?
-            TODO: fix time on chart
-            TODO: can the bit where series is specified near the bottom of the code be removed?
+            specified here. 
             */
 
             var chart = new Highcharts.chart('graph{{ block_id }}', {
-
-
                 chart: {
-                    
                     animation: {
-                        duration: '{{ update_ms }}' / 10 // The duration of the animation in milliseconds
+                        duration: 1000,
                     },
 
-                    height: '{{ height }}' - 80, // -80 allows chart to fit inside parent block
+                    height: '{{ height }}' - 80, 
                     width: '{{ width }}' - 80,
-                    
                     type: 'area',
 
                     events: {
-
                         load: function() { 
                             var serieses = this.series; 
                             setInterval( function() { 
                                 Dajaxice.dashi.update_block( function(data) { 
                                     if(data != Dajaxice.EXCEPTION) { 
-
-                                        for (var i = 0; i <= serieses.length; i++) {
+                                        for (var i = 0; i < serieses.length; i++) {
                                             serieses[i].addPoint([data.vals[i][0], data.vals[i][1]], true, true)
                                         }
                                     }
@@ -52,31 +41,39 @@
                         }
                     }
                 },
+
                 title: false,
                 credits: false,
+
                 xAxis: {
-                    gridLineWidth: 0, // documentation says that this defauts to 0 but it doesn't... weird.
+                    gridLineWidth: 0, 
                     type: 'datetime', 
                     tickPixelInterval: 150,
                 },
+
                 yAxis: {
                     min: 0,
                     plotLines: false, 
+                    title: false,
                 },
-                tooltip: { // appears when hovering over chart.
+
+                tooltip: { 
                     formatter: function() {
                             return '<b>'+ this.series.name +'</b><br/>'+
-                            Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+ 
-                            Highcharts.numberFormat(this.y, 2);
+                            Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) +'<br/>'+ 
+                            this.y;
                             // CLEANER? STRING INTERPOLATION?
                     }
                 },
+
                 legend: {
                     enabled: false
                 },
+
                 exporting: {
                     enabled: false
                 },
+
                 plotOptions: {
                     area: {
                         marker: {
@@ -84,24 +81,26 @@
                         },
                         fillColor: false,
                     },
+                    series: {
+                        pointInterval: 1000
+                    }
                 },
-                series: [ // specific options for each series instance. 
+
+                series: [
                 {% for series in data.series %}
                 {
                     name: '{{ series.label }}',
                     type: 'area',
                     data: (function() {
-                        var data = [], i, time = (new Date()) // creates three variables
-                        for (i = - '{{range}}'; i <= 0; i+=1) { // TODO: need a better understanding of this loop.
+                        var data = [], i, time = (new Date().getTime());
+                        for (i = - '{{range}}'; i <= 0; i+=1) { 
                             data.push({
-                                x: time/1000 + i * '{{update_ms}}' / 1000,
+                                x: time + ('{{ update_ms }}' * i), 
                                 y: 0
                             });
                         }
-
                         return data;
-
-                    })() // mistake?
+                    })()
                 },
                 {% endfor %}
                 ]
