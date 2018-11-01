@@ -10,9 +10,10 @@
         $(document).ready(function() {
 
             /*
-            Creates an area chart which is rendered to a block (update_block). The 
-            height, width, and update time parameters of the chart are specified
-            in dashboard.py. Other options for the 
+            Creates an area chart which is rendered to a block (update_block). 
+            The height, width, and update time parameters of the chart are 
+            specified in the dashboard.py config file. Other options for the graph are 
+            specified here.
 
             TODO: the right side of the chart is not visible.
             TODO: does graph media really do anything?
@@ -20,13 +21,8 @@
             TODO: can the bit where series is specified near the bottom of the code be removed?
             */
 
-            var block_id = {{ block_id }};
-
-
-
             var chart = new Highcharts.chart('graph{{ block_id }}', {
 
-                // general options for the chart. 
 
                 chart: {
                     
@@ -35,7 +31,7 @@
                     },
 
                     height: '{{ height }}' - 80, // -80 allows chart to fit inside parent block
-                    width: '{{ width }}',
+                    width: '{{ width }}' - 80,
                     
                     type: 'area',
 
@@ -61,7 +57,7 @@
                 xAxis: {
                     gridLineWidth: 0, // documentation says that this defauts to 0 but it doesn't... weird.
                     type: 'datetime', 
-                    tickPixelInterval: 150
+                    tickPixelInterval: 150,
                 },
                 yAxis: {
                     min: 0,
