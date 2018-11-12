@@ -1,6 +1,6 @@
 {% extends "blocks/base.html" %}
 {% block render %}
-    <span class="ticker">0</span>{{ data.unit }}
+    <span class="ticker {{ panel_css_class }} OK">0</span>{{ data.unit }}
 {% endblock %}
 {% block support %}
     <script type="text/javascript">
@@ -8,8 +8,8 @@
             Dajaxice.dashi.update_block( function( data ) {
                 if( data != Dajaxice.EXCEPTION ) {
                     $( '#b{{block_id}} .ticker' ).fadeOut( 100, function() {
-                        $( '#b{{block_id}} .ticker' ).html( parseInt(data.value).toLocaleString('en-GB', {useGrouping: true}) ).attr( "class", "ticker " + data.status + ' {{ panel_type }}' ).fadeIn( 100 );
-                    } );
+                        $( '#b{{block_id}} .ticker' ).html( parseInt(data.value).toLocaleString('en-GB', {useGrouping: true}) ).addClass(data.status).fadeIn( 100 );
+                    });
                 }
             }, { block_id: "{{block_id}}" } );
         }, {{ update_ms }} );

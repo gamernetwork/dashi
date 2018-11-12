@@ -1,11 +1,8 @@
 {% extends "blocks/base.html" %}
 {% block render %}
 
-{% load static %}
-{% static "" as static_url %}
-
 <div style="height: {{ height }};">
-	<h2 class="website-name {{ panel_type }}">{{ website_name }}</h2>
+	<h2 class="website-name {{ panel_css_class }}">{{ name }}</h2>
 </div>
 
 
